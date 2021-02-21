@@ -1,0 +1,1065 @@
+( 1 ) 
+  // Create 20 new Accounts Records in salesforce with atleast 5 fields filled.
+
+List<Account> accList = new List<Account>();
+for(integer i=1; i<=20; i++) {
+    Account acc = new Account();
+    acc.Name = 'varun'+i;
+    acc.Rating = 'Rating'+i;
+    acc.Fax = 'FaxDemo' +i;
+    acc.Phone = '12345678' +i;
+    acc.Website = 'www.demo.com'+i;
+    
+    accList.add(acc);
+}
+insert accList;
+
+( 2 )   
+// Create 10 Contacts with different Account(LookUp) values(Relationship with no same 2 accounts) in them.
+
+List<Account> accList = new List<Account>();
+accList = [SELEct Id FROM Account LIMIT 10];
+
+List<Contact> conList = new  List<Contact>();
+
+
+for(Account a: accList) {
+   Contact con = new Contact();
+    con.AccountId = a.Id;
+    con.LastName = 'Bhutani';
+    conList.add(con);
+    System.debug(a);
+}
+
+
+insert conList;
+
+
+( 3 )
+// Create 20 Opportunity with Closed Date, Stage and Opportunity Name.
+
+List<Opportunity> oppList = new List<Opportunity>();
+
+    for(Integer i=1; i<=20; i++) {
+        Opportunity opp = new Opportunity();
+        
+        opp.CloseDate = Date.today();
+        opp.StageName = 'MyStage';
+        opp.Name = 'KUK';
+        oppList.add(opp);
+    }
+
+insert oppList;
+
+
+( 4 ) 
+// Create 10 Products with different Product Names, Description & Family 
+
+List<Product2> proList = new List<Product2>();
+
+List<String>  detail = new List<String>{'HP','Lenovo','Dell','Asus','Sony','MI','Apple','MSI','Nokia','OnePlus'};
+
+for(Integer i=0; i<10; i++) {
+    Product2 pro = new Product2();
+    
+    pro.Name = detail[i];
+    pro.Description = 'i5 Processor and 8Gb Ram';
+    pro.Family = 'Hardware';
+    
+    proList.add(pro);
+}
+
+insert proList;
+
+
+( 5 )
+
+
+// Delete all contacts belonging to Accounts Name FIELD having 'A' in them.
+
+List<Case> delCase = [SELECT ID FROM Case WHERE CaseNumber LIKE  '0000%'];
+System.debug(delCase);
+delete  delCase;
+
+List<Contact> conList = [SELECT Id  FROM Contact WHERE Account.Name LIKE '%A%'];
+System.debug(conList);
+
+delete conList;
+
+
+
+
+(  6 )
+// Update all Opportunity with future Closed Date by Opportunity Name=Opportunity Name + 'F'
+
+List<Opportunity>  oppList = [SELECT Id, Name FROM Opportunity WHERE  CloseDate > Today  ];
+List<Opportunity>  oppList1 = new List<Opportunity>();
+
+for(Opportunity opp: oppList) {
+    opp.Name = opp.Name + 'F';
+    
+    oppList1.add(opp);
+    System.debug(oppList1);
+}
+
+update oppList1;
+
+( 7 )
+
+ // Create a apex class with a function that show  a message "Welcome to Salesforce "
+
+public class PrintMsg {
+    
+    public static void printing() {
+        System.debug('Welcome to Salesforce');
+    }
+
+}
+
+In Anonymous window  
+
+PrintMsg.printing();
+
+( 8 ) 
+// Execute the above function from Apex Class.
+
+// Create 20 Opportunity with Closed Date, Stage and Opportyunity Name.
+public class ApexClass {
+    
+    public static void callFun() {
+        List<Opportunity> oppList = new List<Opportunity>();
+
+    for(Integer i=1; i<=20; i++) {
+        Opportunity opp = new Opportunity();
+        
+        opp.CloseDate = Date.today();
+        opp.StageName = 'MyStage';
+        opp.Name = 'KUK';
+        oppList.add(opp);
+    }
+insert oppList;
+ }
+}
+
+
+In Anonymous window  
+
+ApexClass.callFun();
+
+
+( 9 ) 
+ // Display the current salesforce user details 'Name', 'Number' & 'EmailId'
+
+public class CurrentUser {
+	public static user fetchUser(){
+       user u = [Select MobilePhone,Name,Email,Alias FROM user WHERE id =: userInfo.getUserId()];
+        System.debug(u);
+        return u;
+    }
+}
+
+In AnonymousWindow 
+
+CurrentUser.fetchUser();
+
+
+
+
+
+
+( 10 )
+  // ORDER BY Clause is used to retrieve the data in  “Ascending” or “      Descending” order by the condition given in SOQL Statement
+
+
+// Print the Account Names in Alphabetical ascending order.
+
+List<Account> acc = [SELECT Name FROM Account ORDER BY Name ASC ] ;
+
+for(Account ac: acc) {
+   System.debug(ac.Name);
+}
+
+( 11 ) 
+
+// Print the Account Name in reverse order Ex: Name='Company' => 'ynapmoC'
+
+List<Account> accList = [SELECT Name FROM Account LIMIT 5];
+
+for(Account a: accList) {
+    System.debug(a.Name.reverse());
+    
+}
+
+
+
+( 12 ) 
+// Print the fibonacci series. 1, 1, 2, 3, 5, 8, 13..
+
+Integer firstNumber=0,secondNumber=1,f=1,l;
+
+for(l=1; l<=7; l++) {
+    System.debug(f);
+    f = firstNumber + secondNumber;
+    firstNumber = secondNumber;
+    secondNumber = f;
+   
+}
+
+
+
+
+
+( 13 )
+
+// Print any Integer number in reverse order. Ex: 789234 => 432987
+
+integer num = 789234 , remainder;
+    List<integer>  lst = new List<integer>();
+     while (num != 0) {
+        remainder = (num -10 * (num/10));
+        num /= 10;
+        lst.add(remainder);
+           }
+System.debug(lst);
+
+
+
+
+( 14 )
+// Find all the Products having Description field containing 'a' in it.
+
+List<Product2> proList = [SELECT Description,Name FROM Product2 WHERE Description LIKE '%a%' ];
+System.debug(proList);
+
+( 15 )
+
+// WAP to enter a startDate='06:07:55 2-jan-2016' & endDate='07:08:55 5-feb-2016' and display
+// the difference between two dates in Years, months, days, hours, minutes,seconds.
+
+DateTime Startdate=DateTime.newInstance(2016,2,2,06,07,55);
+DateTime enddate=DateTime.newInstance(2016,2,5,07,08,55);
+
+System.debug(enddate.Year()-Startdate.Year());
+
+System.debug(enddate.Month()-Startdate.Month());
+
+System.debug(enddate.Day()-Startdate.Day());
+
+System.debug(enddate.Hour()-Startdate.Hour());
+
+System.debug(enddate.Minute()-Startdate.Minute());
+
+System.debug(enddate.second()-Startdate.second());
+
+
+( 16 )  
+// Create New Price book 'Algo Pricebook' and 10 Products with Prices in the Pricebook
+
+public class JunctionObject {
+    
+    public static  void   junctionFunction() {
+     // obj 1     Custom Pricebook
+    // Inactive price books are hidden in many areas in the user interface.
+
+    Pricebook2 pb = new Pricebook2(Name = 'Algo Pricebook',IsActive = true );
+    System.debug(pb);
+    insert pb;
+
+   //  Fetching  Standard  Pricebook id
+   Pricebook2 pbk = [SELECT id FROM Pricebook2 WHERE  IsStandard = true LIMIT 1];
+   Id pbid = pbk.id;
+
+
+// obj 2
+List<Product2> prodList= new List<Product2>();
+
+for(Integer i=0; i<10; i++) {
+    Product2  prd = new Product2();
+    prd.Name = 'product'+i;
+    prodList.add(prd);
+    System.debug(prodList);
+}
+insert prodList;
+
+//  Junction Object 
+List<PricebookEntry> pribkentry = new List<PricebookEntry>();
+
+for(Product2 p: prodList) {
+PricebookEntry pbe = new PricebookEntry(Pricebook2Id = pb.Id, Product2Id = p.Id, UnitPrice = 1,UsestandardPrice=false);
+    PricebookEntry pb1 = new PricebookEntry(Pricebook2Id = pbid, Product2Id = p.Id, UnitPrice = 10000.0, IsActive=true);
+    PricebookEntry pb2 = new PricebookEntry(Pricebook2Id = pb.id, Product2Id = p.Id, UnitPrice = 10000.0, IsActive=true);
+
+    pribkentry.add(pb1);
+    pribkentry.add(pb2);
+}
+insert pribkentry;
+
+    }
+
+}
+
+In Anonymous Window
+
+JunctionObject.junctionFunction();
+
+( 17)
+
+//  WAP to add two binary nos. '100101' & '0101101' which are in text format.
+
+String sa = '101010';
+String sb='10100010';
+
+integer a = 0;
+integre b=0;
+for(String s: sa.split('')) {
+a *= 2;
+a += (s == '1'? 1: 0);
+}
+for(String s: sb.split('')) {
+b*= 2;
+b += (s == '1'? 1: 0);
+}
+}
+Integer ans=a+b;
+
+String req = '';
+while(ans!=0){
+
+req+=Math.mod(ans,2);      // coverting into binary 
+ans/=2;
+}
+System.debug(req.reverse());
+
+
+
+
+( 18 )
+
+// Write a program in Salesforce to create another System admin user in your dev org with your email. Register the user manually.
+
+public class CreateSystemAdmin {
+              
+             public static void CreateAdmin(){
+           
+                Profile profileID=new Profile();
+                profileID = [SELECT id from Profile where Name='System Administrator' limit 1 ];
+            
+                User usrs=new User();
+                usrs.Alias='VBhut';
+                usrs.LastName='Bhutani';
+                usrs.Email='varun.bhutani@cloudanalogy.com';
+                usrs.Username='varun9898@gmail.com';
+          //      usrs.UserRoleId='Developer';
+                usrs.ProfileId = profileID.id;
+                usrs.EmailEncodingKey='UTF-8';
+                usrs.LocaleSidKey='en_US';
+                usrs.TimeZoneSidKey='GMT';
+                usrs.LanguageLocaleKey='en_US';
+                insert usrs;
+        }
+    }
+
+
+
+In Anonymous Window
+
+CreateSystemAdmin.CreateAdmin();
+
+( 19 ) 
+// WAP to create 5 Case Records with all the values(Account, Contact, etc) filled in.
+
+List<Account> acc = [SELECT id, Name FROM Account LIMIT 5];
+system.debug(acc);
+List<Contact> con = [SELECT id, Name FROM Contact  LIMIT 5]; 
+
+List<Case> cseList = new List<Case>();
+
+for(Integer i=0; i<5; i++) {
+    Case cs = new Case();
+    cs.AccountId =  acc[i].id;
+    cs.SuppliedEmail = dummy@google.com';
+   cs.Type = ‘Cloud Services’;
+   cs.ContactId = con[i].id;
+    
+    cseList.add(cs);
+    System.debug(cseList);
+}
+insert cseList;
+
+( 20 )
+// Manually add 2 (jpg and PDF) attachments under Accounts related list. WAP to copy the attachments to Contact associated(parent child) with Account.
+
+Account acc = [select ID from account where name='United Oil & Gas, Singapore' limit 1];
+List<Contact> con = [select id from Contact where AccountId=:acc.id];
+List<Attachment> newAtt = new List<Attachment>();
+List<Attachment> a = [select id,Body,Name from Attachment where ParentId=:acc.id];
+for(Contact m:con){
+for(Attachment c:a){
+Attachment att = new Attachment();
+att.Body = c.Body;
+att.Name = c.Name;
+att.ParentId = m.id;
+newAtt.add(att);
+}
+}
+insert newAtt;
+
+
+
+
+( 21 )
+
+// Write a code to clone(copy ) 1 Opportunity with all Opportunity line items into a new Opportunity with Closed Date = Old closed date + 30 days & Opportunity name = Opportunity Name+ 'Clone'
+
+opportunity opp = [select Id,Name,CloseDate from opportunity where name = 'opportunitytoday' limit 1];
+system.debug(opp);
+List<OpportunityLineItem> oli = [select Id,OpportunityId,PricebookEntryId,Product2Id,Quantity,TotalPrice from OpportunityLineItem where OpportunityId=: opp.Id];
+System.debug(oli);
+
+opportunity cloneopp = opp.clone();
+cloneopp.closeDate = opp.CloseDate.addDays(30);
+cloneopp.StageName = 'closeWon';
+cloneopp.Name = opp.Name+' Clone';
+   System.debug(cloneopp);
+ insert cloneopp;
+
+List<OpportunityLineItem> oliList = new List<OpportunityLineItem>();
+for(OpportunityLineItem o:oli){
+OpportunityLineItem oppLi = new OpportunityLineItem();
+    
+oppLi.OpportunityId = cloneopp.id;
+oppLi.PricebookEntryId = o.PricebookEntryId;
+oppLi.Product2Id = o.Product2Id;
+oppLi.Quantity = o.Quantity;
+oppLi.TotalPrice = o.TotalPrice;
+oliList.add(oppLi);
+}
+insert oliList;
+
+
+
+
+
+( 22 )
+// Write a Script to get all the Accounts having Oppotunity Line Items Quantity > 100 under their 
+Opportunities(CLOSED WON only).
+
+
+list<OpportunityLineItem> ollist = [select id,name,OpportunityId,Quantity,TotalPrice from OpportunityLineItem where Quantity > 100 ];
+List<id> oId = new List<id>();
+    
+for (OpportunityLineItem d: ollist) {
+    oId.add(d.OpportunityId);
+    System.debug(d.name);
+}
+
+System.debug(oId);
+
+System.debug(ollist);
+
+
+List<Opportunity> oplist=[Select id,Name,StageName,AccountId from Opportunity where StageName = 'CLOSED WON' and ID IN: oId];
+system.debug(oplist);
+
+for (Integer i=0; i<oplist.size(); i++) {
+List<Account> alist=[Select id,Name from Account Where id =: oplist[i].AccountId];
+System.debug(alist);
+System.debug(alist[i].name);   
+}
+
+
+( 23 )
+// Create a new multiplicklist field In Lead Object"Records" [Buyer, Seller, Tenant , Landloard]. Write script to fetch all the Sellers and Tenant which are entered this year.
+
+List<lead> leadList= [SELECT id, Name,CreatedDate FROM Lead WHERE Records__c includes ('Seller;Tenant') ];
+
+for(lead  l: leadList) {
+    if(l.CreatedDate.year() == Date.today().year()) {
+       System.debug(l.Name);
+    }
+}
+
+( 24 )
+Create a Custom Object Plan. Create 2 fields in Plan.
+1. Travel Hours(Integers)
+2. Travel Location(A,B,C,D,E,F) Multipicklist.
+Write a script to get the total hours of all the Plans record having
+Multipicklist A or F selected only or with other values.
+
+
+List<Plan__c> plan1= [SELECT Name,Travel_Hours__c, Travel_Location__c  FROM Plan__c WHERE Travel_Location__c includes ('A','F')];
+System.debug(plan1);
+
+decimal hours = 0;
+for(Plan__c  p: plan1) {
+    
+    hours = hours + p.Travel_Hours__c; 
+}
+System.debug(hours);
+
+
+
+( 25 )
+"Create an Object ""Event"" (Name Default field and ""Event Date"" Date time field). Another Junction Object ""Event Participant"" with 3 fields
+1. lookup Contact
+2. lookup Event
+3. multipicklist (""Attendee Contact"", ""Presenter Contact"",""Organizer Contact"")
+Write a script to create 10 ""Event Participant"" with  4 Attendee picklist, 4 with Presenter, 2 with organizer."
+
+
+// Junction Object is Event Participant
+
+List<Event_Participant__c>  junObj = new  List<Event_Participant__c>();
+Event__c  evn = [SELECT id FROM Event__c WHERE Name ='event4' LIMIT 1];     // fetching event record id
+Contact  cont = [SELECT id FROM Contact WHERE Name = 'Bhutani' LIMIT 1];    // fetching contact record id
+
+for (Integer i=0; i<10; i++) {
+    Event_Participant__c    epObj = new Event_Participant__c();
+    epObj.name = 'player '+i;
+    
+    epObj.Contact__c = cont.id;
+    epObj.Event__c = evn.id;
+    
+    if(i<4) {
+        epObj.Event_Participant_multiPickList__c = 'Attendee Contact';
+    }
+    if(i >= 4 && i<8) {
+         epObj.Event_Participant_multiPickList__c = 'Presenter Contact';
+    }
+    if (i >= 8) {
+        epObj.Event_Participant_multiPickList__c = 'Organizer Contact';
+}
+    
+    junObj.add(epObj);
+}
+System.debug(junObj);
+insert (junObj);
+
+
+
+( 26 )
+//  Write a Script to get all the Accounts having more than 2 Oppotunity Line Items in their Opportunity.
+
+List<AggregateResult> o = [select OpportunityId from OpportunityLineItem group by opportunityId having count(OpportunityId)>2];
+system.debug(o.size());
+
+List<ID> i = new List<ID>();
+
+for(AggregateResult a:o){
+i.add((Id)a.get('OpportunityId'));   // fetch id from AggregateResult
+}
+
+List<Opportunity> opp = [select AccountID from Opportunity where Id In: i];
+List<id> accid = new List<Id>();
+for(Opportunity a:opp){
+accid.add(a.accountId);
+}
+List<account> acc = [select id,Name from account where Id in: accid];
+system.debug(acc);
+
+
+
+
+
+( 27 )
+// In Account Object create a Multi picklist "Working in (ASIA, EMA, NA, SA)".
+Write a script to get the total "No of employees" of all the Accounts working in ASIA and NA(North America)
+
+List<Account> accList = [select id,Working_In__c from Account where Working_In__c includes ('ASIA;NA')];
+System.debug(accList);
+system.debug('Number of Employees = '+accList.size()); 
+
+OR
+List<Account> accList = [select id,Working_In__c from Account where Working_In__c includes ('ASIA;NA')];
+Integer sum =0;
+for(Account a: accList){
+	sum++;
+}
+System.debug(accList);
+system.debug('Number of Employees = '+accList.size()); 
+System.debug(sum);
+
+
+
+
+( 28 )
+
+//  Write a Script to get all the Contacts having same email as any Salesforce User.Email
+
+ List <Contact> conn = [select Email,Name From Contact where Email =: UserInfo.getUserEmail()];
+for(Contact con:conn)
+{   
+    System.debug(con.Name);
+}
+
+( 29 )
+// Create a new Product "Gandhiji Chasma". Add Price as 100$ in standard price book and any other price books as well. Create few oppportunites with Opportunity line item "Gandhiji Chasma". Write a script to get the total Price of all the Opportunity sold having Product "Gandhiji Chasma".
+
+// We used aggregate function sum  function here
+
+list<Opportunity> oplist=[Select id from Opportunity Where StageName='CLOSED WON' limit 100] ;
+system.debug(oplist);
+List<AggregateResult> plist=[Select sum(TotalPrice)sum from OpportunityLineItem where Product2.Name ='Gandhiji Chasma' and OpportunityId in:oplist];
+system.debug(plist[0].get('sum'));
+
+OR
+
+// Without using aggregate function
+
+List<opportunity> newlist=[select id from opportunity where StageName='Closed Won'];
+List<OpportunityLineItem> opp=[select TotalPrice,opportunityid from OpportunityLineItem where product2.Name='Gandhiji Chasma' and opportunityid in:newlist];
+decimal sum=0;
+for(OpportunityLineItem l:opp)
+{
+sum+=l.TotalPrice;
+}
+system.debug(sum);
+
+
+( 30 )
+// Create several Accounts and Opportunites and products.Write a Script to get all the Accounts having more than 2 Opportunites with Closed Won.
+
+AggregateResult[] opp=[Select AccountId from Opportunity Where StageName='CLOSED WON' group by AccountId having count(AccountId)>2];
+list<id> acId=new List<id>();
+for(AggregateResult op:opp){
+acId.add((ID)op.get('AccountId'));
+
+}
+list<Account> a1=[Select Name,Id from Account where Id IN:acId];
+for(Account a12:a1){
+system.debug(a12.Name);
+}
+
+
+( 31 )
+// Create a look up[Lead] on product so that Products come over in related list of a Lead. Write script to create 3 Leads and 5 Products with Lead lookup field.
+
+List<lead>  leadList = new List<lead>();
+
+for(Integer i=0; i<3; i++) {
+    Lead   ldObj = new Lead();
+    ldObj.Company = 'CA';
+    ldObj.FirstName = 'Cloud' +i ;
+    ldObj.LastName = 'Analogy'+i;
+    ldObj.Email = 'ca@cloudanalogy.com';
+    ldObj.Country = 'INDIA';
+    leadList.add(ldObj);
+}
+System.debug(leadList);
+insert leadList;
+
+List<Product2> prdList = new List<Product2>();
+
+for(lead  ld: leadList) {
+    for (Integer i=0; i<5; i++) {
+        Product2  prd = new Product2();
+        prd.Name = 'Product Name'+i;
+        prd.Lead__c = ld.id;
+        prd.ProductCode = 'p-123'+i;
+        prdList.add(prd);
+    }
+}
+insert prdList;
+System.debug(prdList);
+
+
+( 32 )
+// Create a Script to find out all the users in the systems who are having more than 20 Leads allocated[Owner] to them in month of Dec 2017
+
+
+List<AggregateResult> alist=[Select OwnerId from Lead Where CreatedDate >=: date.newInstance(2021,2,1) and CreatedDate <=: date.newInstance(2021,2,29) group by OwnerId having Count(OwnerId)>20 limit 10000];
+System.debug(alist);
+
+list<id> acId=new List<id>();
+for(AggregateResult op:alist){
+acId.add((ID)op.get('OwnerId'));
+}
+list<User> ulist=[Select Name,id from User Where Id in:acId];
+System.debug(ulist);
+
+
+( 33 )
+//In Account Object create a Multi picklist "Working in (ASIA, EMA, NA, SA)" Multipicklist.
+Write a script to get the total Quantity of Products sold in only Accounts working in ASIA.
+
+
+List<Account>  accList = [SELECT id, Working_In__c FROM  Account WHERE Working_In__c includes ('ASIA') LIMIT 50];
+System.debug(accList);
+
+List<id> acid = new List<id>();
+for(Account a: accList) {
+    acid.add(a.id);
+}
+double  num =0;
+List<Opportunity> oppList = [SELECT id, Name, TotalOpportunityQuantity FROM Opportunity WHERE AccountId IN: acid and StageName = 'Closed Won'];
+
+for(Opportunity o: oppList) {
+    num+= o.TotalOpportunityQuantity;
+}
+System.debug(oppList);
+System.debug(num);
+
+
+( 34 )
+ // " Write a script to get all the Account having
+// more than 10 opportunities whose status is closed won and the close date is between one month.
+
+// (THIS_MONTH)Starts 00:00:00 on the first day of the month that the current day is in 
+// and continues for all the days of that month.( Date Literals )
+
+List<AggregateResult>  opplist = [SELECT AccountId FROM Opportunity WHERE StageName = 'Closed Won' and (CloseDate <=THIS_MONTH) Group By AccountId Having Count(AccountId)>2 limit 100];
+List<id> acid = new List<id>();
+
+for(AggregateResult ar: opplist) {
+    acid.add((id)ar.get('AccountId'));
+}
+List<Account> acc = [SELECT id,Name FROM Account WHERE id IN: acid];
+for(Account a: acc) {
+    System.debug(a.name);
+}
+
+
+
+
+
+
+( 35 )
+// Write a script to send Email to all users which are having more than 100 Account (Having phone number) and 30 contacts(Having email address).
+
+// fetching user who have phone Number
+List<Account> o = [select OwnerID from Account where Phone!=null];
+List<ID> m = new List<ID>();
+for(Account a:o){
+    m.add(a.OwnerID);
+}
+List<AggregateREsult> ans = [select OwnerID  from Account group By OwnerID having (OwnerID in: m and  count(OwnerId)>5 )];    // have 100 account but we take 5 only
+System.debug(ans);
+List<ID> idddd = new List<ID>();
+for(AggregateResult a:ans){
+    idddd.add((ID)a.get('OwnerId'));
+}
+List<Contact> cc = [select OwnerId from Contact where Email!=null and ownerID in: idddd ];
+List<ID> z = new List<ID>();
+for(Contact a:cc){
+    z.add(a.OwnerID);
+}
+List<AggregateResult> conAgg = [select OwnerID from Contact group by OwnerID  having (OwnerID in:z and Count(OwnerID)>10)];
+List<ID> iddd= new List<ID>();
+for(AggregateResult a:conAgg){
+    iddd.add((ID)a.get('OwnerId'));
+}
+List<User> us = [select Email from User where Id in: iddd];
+System.debug(us);
+List<String> s = new List<String>();
+for(User u:us){
+    s.add(u.Email);
+}
+    messaging.SingleEmailMessage email1=new messaging.SingleEmailMessage();
+	email1.setToAddresses(s);
+	email1.setSubject('hi USer');
+	email1.setPlainTextBody('U have Account and Contact');
+	email1.setSenderDisplayName('Varun Bhutani');
+	messaging.Email[] emails = new messaging.Email[]{email1};
+	messaging.sendEmail(emails);
+
+
+
+
+================ OR =====================
+
+// class
+
+public class EmailManager {
+    // Public method
+    public void sendMail(String address, String subject, String body) {
+        // Create an email message object
+        Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+        String[] toAddresses = new String[] {address};
+        mail.setToAddresses(toAddresses);
+        mail.setSubject(subject);
+        mail.setPlainTextBody(body);
+        // Pass this email message to the built-in sendEmail method 
+        // of the Messaging class
+        Messaging.SendEmailResult[] results = Messaging.sendEmail(
+                                 new Messaging.SingleEmailMessage[] { mail });
+        
+        // Call a helper method to inspect the returned results
+        inspectResults(results);
+    }
+    
+    // Helper method
+    private static Boolean inspectResults(Messaging.SendEmailResult[] results) {
+        Boolean sendResult = true;
+        
+        // sendEmail returns an array of result objects.
+        // Iterate through the list to inspect results. 
+        // In this class, the methods send only one email, 
+        // so we should have only one result.
+        for (Messaging.SendEmailResult res : results) {
+            if (res.isSuccess()) {
+                System.debug('Email sent successfully');
+            }
+            else {
+                sendResult = false;
+                System.debug('The following errors occurred: ' + res.getErrors());                 
+            }
+        }
+        
+        return sendResult;
+    }
+}
+
+
+// ==================================
+
+List<AggregateResult> accList = [SELECT OwnerId FROM Account Group By OwnerId,Phone Having Count(OwnerId)>1 and Phone != ''];
+List<id> acid = new List<id>();
+for(AggregateResult a: accList) {
+    acid.add((id)a.get('OwnerId'));
+}
+
+List<AggregateResult> conList = [SELECT OwnerId,Name FROM Contact  Group BY OwnerId,Name Having  Count(OwnerId)>1 AND OwnerId IN: acid ];
+List<id> conid = new List<id>();
+for(AggregateResult c: conList) {
+    conid.add((id)c.get('OwnerId'));
+    System.debug((string)c.get('Name'));
+}
+
+List<User> usr = [SELECT Email FROM User WHERE id IN: conid];
+
+for (User u: usr) {
+    EmailManager em = new EmailManager();
+em.sendMail(u.Email, 'Trailhead Tutorial-Sending Email', 'Email Body Here');
+}
+
+
+
+
+
+
+( 36 )
+
+// Write a script to get all Account those are associated with opportunity
+//and put the attachment from account to their opportunity.
+//If the account does not have attachment put opportunity close loss otherwise close won.
+
+
+
+List<Opportunity> oppList = [select Id , accountId from Opportunity where AccountId!=null limit 100];
+System.debug(oppList);
+
+List<Id> aid = new List<ID>();
+for(Opportunity o:oppList){
+    aid.add(o.accountId);
+}
+List<Attachment> agg = [select ParentId,Body,Name from Attachment where parentId in: aid];
+System.debug(agg);
+Map<Id,List<Attachment>> m = new Map<ID,List<Attachment>>();
+for(Attachment o:agg){
+    if(m.containsKey(o.ParentId)) {
+		List<Attachment> a = m.get(o.ParentId);
+		a.add(o);
+		m.put(o.ParentId, a);
+	} else {
+		m.put(o.ParentId, new List<Attachment> { o });
+	}
+  
+        
+}
+List<attachment> newatt = new List<Attachment>();
+for(Opportunity o:oppList){
+    if(m.containsKey(o.accountId)){
+        List<Attachment> att = m.get(o.accountId);
+        for(attachment a:att){
+            Attachment temp = new Attachment();
+            temp.NAme = a.NAme;
+            temp.Body = a.body;
+            temp.parentId = o.id;
+            newatt.add(temp);
+            
+        }
+        o.stagename = 'closed won';
+    }
+    else{
+        o.StageNAme = 'Closed Lost';
+    }
+}
+insert newatt;
+update oppList;
+
+
+=============OR===================
+list<Opportunity>op=[select Accountid,stageName from Opportunity limit 50];
+system.debug(op);
+//list<Attachment>newlist=new list <Attachment>();
+for(integer i=0;i<op.size();i++)
+{
+list<Attachment> ac=[select id,Name,body,parentid from Attachment where ParentId =:op[i].accountid ];
+//system.debug(ac);
+if(!ac.isempty())
+{
+list <Attachment>li=new list<Attachment>();
+for(Attachment bc:ac)
+{
+Attachment obj =new Attachment();
+obj.Name=bc.Name;
+obj.body=bc.body;
+obj.parentid=op[i].id;
+li.add(obj);
+}
+insert li;
+op[i].stageName='close won';
+update op[i];
+
+}
+else
+{
+op[i].stageName='close loss';
+update op[i];
+}
+
+}
+
+
+
+
+
+
+
+( 37 )
+// Write a script to Send opportunity details to the Account's Contact's email address whose close date is 10 days later.
+
+
+
+List<Opportunity> opp = [select Name,AccountID from opportunity where closeDate=Next_N_DAYS:10];
+List<Id> idd = new List<ID>();
+Map<ID,List<Contact>> mp = new Map<ID,List<Contact>>();
+for(Opportunity o:opp){
+    idd.add(o.AccountId);
+    
+}
+System.debug(idd);
+List<Contact> acc = [select AccountID,Email from Contact where accountID in :idd];
+for(Contact a:acc){
+    if(mp.containsKey(a.accountId)){
+        List<Contact> t=mp.get(a.accountID);
+        t.add(a);
+        mp.put(a.accountId,t);
+    }
+    else{
+        mp.put(a.accountId,new List<Contact>{a});
+    }
+}
+
+List<messaging.Email> emails = new List<messaging.Email>();
+for(Opportunity o:opp){
+    List<String> se = new List<String>();
+    for(Contact c:mp.get(o.accountId)){
+        if(c.email!=null)
+        se.add(c.email);
+    }
+    if(se.size()!=0){
+        
+    
+    messaging.SingleEmailMessage email1=new messaging.SingleEmailMessage();
+	email1.setToAddresses(se);
+	email1.setSubject('hi USer');
+	email1.setPlainTextBody('U have Account and Contact');
+	email1.setSenderDisplayName('Rahul Mittal');
+        emails.add(email1);
+
+	
+   
+
+    }
+}
+if(emails.size()!=0)
+messaging.sendEmail(emails);
+System.debug(emails);
+
+
+==============OR===================
+
+list<Opportunity> oplist=[Select id,name,AccountId,CloseDate from Opportunity Where CloseDate = NEXT_N_DAYS:10 limit 100];
+system.debug(oplist);
+list<id> mlist = new list<id>();
+for(Opportunity o: oplist){
+mlist.add(o.AccountId);
+}
+list<Contact> clist=[Select id,Email from Contact Where AccountId in:mlist and Email !=''];
+System.debug(clist);
+String[] s = New List<String>();
+For(Contact c : clist){
+s.add(c.Email);
+}
+if(s.size()>0){
+messaging.SingleEmailMessage email1=new messaging.SingleEmailMessage();
+email1.setToAddresses(s);
+email1.setSubject('sending mail by Script');
+email1.setPlainTextBody('Hello !');
+email1.setSenderDisplayName('abc');
+messaging.Email[] emails = new messaging.Email[]{email1};
+messaging.sendEmail(emails);
+}
+
+
+
+
+
+        
+
+
+
+
+========================================================================
+
+// This program will give OpportunityLineItem that is associated with Any Opportunity
+
+List<Opportunity>  oppList = [SELECT id From Opportunity WHERE Name = 'Burlington Textiles Weaving Plant Generator' LIMIT 2];
+
+List<OpportunityLineItem>  oli = [SELECT id,OpportunityId FROM OpportunityLineItem WHERE OpportunityId in: oppList];
+//System.debug(oli);
+
+Map<id, List<OpportunityLineItem>> oppvsOppLIMap = new Map<id, List<OpportunityLineItem>>();
+
+for(OpportunityLineItem opLI: oli) {
+    if(oppvsOppLIMap.containsKey(opLI.OpportunityId)) {
+        oppvsOppLIMap.get(opLI.OpportunityId).add(opLI);
+    } 
+     else if(!oppvsOppLIMap.containsKey(opLI.OpportunityId)) {
+        oppvsOppLIMap.put(opLI.OpportunityId, new List<OpportunityLineItem>{opLI});
+    }
+ }       
+System.debug(oppvsOppLIMap);
+
+
+
+// ===============================================================
+// This program will give Contact that is associated with Any Account
+
+List<Account> accList = [select id,name from Account limit 5];
+List<Contact> conList = [select id,Accountid,name from Contact where Accountid in: accList];
+
+Map<id, List<Contact>>  accVsContMap = new Map<id, List<Contact>>();
+
+for(Contact cnt: conList) {
+    if(accVsContMap.containsKey(cnt.Accountid)) {
+        accVsContMap.get(cnt.Accountid).add(cnt);
+    }
+    else if (!accVsContMap.containsKey(cnt.Accountid)) {
+        accVsContMap.put(cnt.id, new List<contact>{cnt});
+    }
+}
+System.debug(accVsContMap);
+
+
+
+
+
+
+
+
+
+
+
+
