@@ -285,7 +285,7 @@ insert prodList;
 List<PricebookEntry> pribkentry = new List<PricebookEntry>();
 
 for(Product2 p: prodList) {
-PricebookEntry pbe = new PricebookEntry(Pricebook2Id = pb.Id, Product2Id = p.Id, UnitPrice = 1,UsestandardPrice=false);
+
     PricebookEntry pb1 = new PricebookEntry(Pricebook2Id = pbid, Product2Id = p.Id, UnitPrice = 10000.0, IsActive=true);
     PricebookEntry pb2 = new PricebookEntry(Pricebook2Id = pb.id, Product2Id = p.Id, UnitPrice = 10000.0, IsActive=true);
 
@@ -389,20 +389,22 @@ insert cseList;
 ( 20 )
 // Manually add 2 (jpg and PDF) attachments under Accounts related list. WAP to copy the attachments to Contact associated(parent child) with Account.
 
-Account acc = [select ID from account where name='United Oil & Gas, Singapore' limit 1];
-List<Contact> con = [select id from Contact where AccountId=:acc.id];
+Account acc = [select ID from account where name='United Oil & Gas, SingaporeUnited oil contact 1' limit 1];
+List<Contact> con = [select id,name from Contact where AccountId=:acc.id];
+System.debug(con);
 List<Attachment> newAtt = new List<Attachment>();
 List<Attachment> a = [select id,Body,Name from Attachment where ParentId=:acc.id];
-for(Contact m:con){
-for(Attachment c:a){
+for(Contact cc:con){
+for(Attachment aa:a){
 Attachment att = new Attachment();
-att.Body = c.Body;
-att.Name = c.Name;
-att.ParentId = m.id;
+att.Body = aa.Body;
+att.Name = aa.Name;
+att.ParentId = cc.id;
 newAtt.add(att);
 }
 }
 insert newAtt;
+
 
 
 
@@ -497,6 +499,11 @@ for(Plan__c  p: plan1) {
 }
 System.debug(hours);
 
+=================== OR ==========================================
+
+List<AggregateResult> l = [select SUM(Travel_Hours__c) sum from Plan__c where Travel_Locations__c includes ('A','F')];
+system.debug(l[0].get('sum'));
+
 
 
 ( 25 )
@@ -578,6 +585,10 @@ for(Account a: accList){
 System.debug(accList);
 system.debug('Number of Employees = '+accList.size()); 
 System.debug(sum);
+
+============================= OR ================
+List<aggregateResult> ans = [select Sum(NumberOfEmployees) from Account where Working_in__c includes ('ASIA;NA')];
+System.debug(ans);
 
 
 
@@ -698,6 +709,16 @@ for(Opportunity o: oppList) {
 }
 System.debug(oppList);
 System.debug(num);
+
+====================  OR ====================================
+
+List<Account> acc = [select Id,name from Account where Working_in__c includes ('ASIA')];
+System.debug(acc);
+List<Opportunity> opp = [select Id from opportunity where (AccountId in: acc and StageNAme='Closed Won')];
+System.debug(opp);
+List<AggregateResult> agg = [select Sum(Quantity) total from OpportunityLineItem where (opportunityId in: opp )];
+System.debug(agg[0].get('total'));
+
 
 
 ( 34 )
@@ -1014,6 +1035,7 @@ messaging.sendEmail(emails);
 ========================================================================
 
 // This program will give OpportunityLineItem that is associated with Any Opportunity
+
 
 List<Opportunity>  oppList = [SELECT id From Opportunity WHERE Name = 'Burlington Textiles Weaving Plant Generator' LIMIT 2];
 
